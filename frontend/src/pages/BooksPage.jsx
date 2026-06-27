@@ -17,6 +17,32 @@ function BooksPage() {
     }
   };
 
+  const borrowBook = async (bookId) => {
+    try {
+      const token = localStorage.getItem("access");
+
+      const response = await api.post(
+        `borrow/${bookId}/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert(response.data.message);
+
+      fetchBooks();
+    } catch (error) {
+        console.log("ERROR:", error);
+        console.log("RESPONSE:", error.response);
+
+        alert(JSON.stringify(error.response?.data));
+      
+    }
+  };
+
   return (
     <div className="container mt-5">
       <h2>Books</h2>
@@ -28,6 +54,7 @@ function BooksPage() {
             <th>Author</th>
             <th>Genre</th>
             <th>Year</th>
+            <th>Action</th>
           </tr>
         </thead>
 
@@ -38,6 +65,15 @@ function BooksPage() {
               <td>{book.author}</td>
               <td>{book.genre}</td>
               <td>{book.publication_year}</td>
+
+              <td>
+                <button
+                  className="btn btn-success btn-sm"
+                  onClick={() => borrowBook(book.id)}
+                >
+                  Borrow
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
