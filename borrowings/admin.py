@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Borrowing, Reservation
+
+
+admin.site.register(Borrowing)
+
+admin.site.register(Reservation)
