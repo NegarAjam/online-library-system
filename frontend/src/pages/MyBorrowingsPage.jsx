@@ -1,0 +1,61 @@
+import { useEffect, useState } from "react";
+import api from "../services/api";
+
+function MyBorrowingsPage() {
+  const [borrowings, setBorrowings] = useState([]);
+
+  useEffect(() => {
+    fetchBorrowings();
+  }, []);
+
+  const fetchBorrowings = async () => {
+    try {
+      const token = localStorage.getItem("access");
+
+      const response = await api.get(
+        "my-borrowings/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setBorrowings(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div className="container mt-5">
+      <h2>My Borrowings</h2>
+
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Fine</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {borrowings.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.borrow_date}</td>
+              <td>{item.due_date}</td>
+              <td>{item.fine_amount}</td>
+              <td>{item.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default MyBorrowingsPage;
