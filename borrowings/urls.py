@@ -3,7 +3,9 @@ from django.urls import path
 from .views import (
     BorrowBookView,
     ReturnBookView,
-    ReserveBookView
+    ReserveBookView,
+    MyBorrowingsView,
+    MyReservationsView,
 )
 
 urlpatterns = [
@@ -21,5 +23,15 @@ urlpatterns = [
     path(
         "reserve/<int:book_id>/",
         ReserveBookView.as_view()
+    ),
+
+    path(
+    "my-borrowings/",
+    MyBorrowingsView.as_view()
+    ),
+
+    path(
+        "my-reservations/",
+        MyReservationsView.as_view()
     ),
 ]

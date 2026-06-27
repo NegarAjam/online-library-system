@@ -12,6 +12,12 @@ from datetime import date
 
 from .models import Reservation
 
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import BorrowingSerializer
+from .serializers import ReservationSerializer
+from .models import Borrowing  
 
 class BorrowBookView(APIView):
 
@@ -107,3 +113,27 @@ class ReserveBookView(APIView):
                 "message": "Reservation created"
             }
         )
+    
+class MyBorrowingsView(ListAPIView):
+
+    serializer_class = BorrowingSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        return Borrowing.objects.filter(
+            user=self.request.user
+        ).order_by("-borrow_date")
+    
+class MyReservationsView(ListAPIView):
+
+    serializer_class = ReservationSerializer
+
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        return Reservation.objects.filter(
+            user=self.request.user
+        ).order_by("-reservation_date")

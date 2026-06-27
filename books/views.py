@@ -7,7 +7,6 @@ from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsAdminRole
 
-
 class BookViewSet(viewsets.ModelViewSet):
 
     queryset = Book.objects.all()
@@ -41,3 +40,4 @@ class BookViewSet(viewsets.ModelViewSet):
             return [IsAdminRole()]
 
         return []
+    
