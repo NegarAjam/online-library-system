@@ -36,5 +36,9 @@ urlpatterns = [
         "api/",
         include("borrowings.urls")
     ),
-
+    
+    path(
+        "api/",
+        include("notifications.urls")
+    ),
 ]
