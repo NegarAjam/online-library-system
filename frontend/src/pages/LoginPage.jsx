@@ -1,9 +1,11 @@
 import { useState } from "react";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -16,9 +18,15 @@ function LoginPage() {
       localStorage.setItem("refresh", response.data.refresh);
 
       alert("Login successful");
+
+      navigate("/books");
+
     } catch (error) {
-      alert("Invalid credentials");
-      console.log(error);
+        console.log("ERROR:", error);
+        console.log("RESPONSE:", error.response);
+        console.log("MESSAGE:", error.message);
+
+        alert(error.message);
     }
   };
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import Navbar from "../components/Navbar";
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
@@ -44,41 +45,46 @@ function BooksPage() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Books</h2>
+      <>
+        <Navbar />
 
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Genre</th>
-            <th>Year</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+        <div className="container mt-5">
+        <h2>Books</h2>
 
-        <tbody>
-          {books.map((book) => (
-            <tr key={book.id}>
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>{book.genre}</td>
-              <td>{book.publication_year}</td>
-
-              <td>
-                <button
-                  className="btn btn-success btn-sm"
-                  onClick={() => borrowBook(book.id)}
-                >
-                  Borrow
-                </button>
-              </td>
+        <table className="table table-bordered">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genre</th>
+                <th>Year</th>
+                <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+            </thead>
+
+            <tbody>
+            {books.map((book) => (
+                <tr key={book.id}>
+                <td>{book.title}</td>
+                <td>{book.author}</td>
+                <td>{book.genre}</td>
+                <td>{book.publication_year}</td>
+
+                <td>
+                    <button
+                    className="btn btn-success btn-sm"
+                    onClick={() => borrowBook(book.id)}
+                    >
+                    Borrow
+                    </button>
+                </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+        </div>
+    </>
+
   );
 }
 

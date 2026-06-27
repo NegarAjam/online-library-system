@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import Navbar from "../components/Navbar";
 
 function MyBorrowingsPage() {
   const [borrowings, setBorrowings] = useState([]);
@@ -56,59 +57,62 @@ function MyBorrowingsPage() {
   };
 
   return (
-    <div className="container mt-5">
+    <>
+    <Navbar />    
+        <div className="container mt-5">
 
-      <h2>My Borrowings</h2>
+        <h2>My Borrowings</h2>
 
-      <table className="table table-bordered">
+        <table className="table table-bordered">
 
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Borrow Date</th>
-            <th>Due Date</th>
-            <th>Fine</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          {borrowings.map((item) => (
-
-            <tr key={item.id}>
-
-              <td>{item.id}</td>
-              <td>{item.borrow_date}</td>
-              <td>{item.due_date}</td>
-              <td>{item.fine_amount}</td>
-              <td>{item.status}</td>
-
-              <td>
-
-                {item.status === "borrowed" && (
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() =>
-                      returnBook(item.id)
-                    }
-                  >
-                    Return
-                  </button>
-                )}
-
-              </td>
-
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Fine</th>
+                <th>Status</th>
+                <th>Action</th>
             </tr>
+            </thead>
 
-          ))}
+            <tbody>
 
-        </tbody>
+            {borrowings.map((item) => (
 
-      </table>
+                <tr key={item.id}>
 
-    </div>
+                <td>{item.id}</td>
+                <td>{item.borrow_date}</td>
+                <td>{item.due_date}</td>
+                <td>{item.fine_amount}</td>
+                <td>{item.status}</td>
+
+                <td>
+
+                    {item.status === "borrowed" && (
+                    <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() =>
+                        returnBook(item.id)
+                        }
+                    >
+                        Return
+                    </button>
+                    )}
+
+                </td>
+
+                </tr>
+
+            ))}
+
+            </tbody>
+
+        </table>
+
+        </div>
+    </>
   );
 }
 
