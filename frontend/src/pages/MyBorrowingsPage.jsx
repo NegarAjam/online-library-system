@@ -43,9 +43,9 @@ function MyBorrowingsPage() {
         }
       );
 
-      alert(
-        `Book returned. Fine: ${response.data.fine}`
-      );
+        alert(
+        `Book returned successfully. Fine: ${response.data.fine}`
+        );
 
       fetchBorrowings();
 

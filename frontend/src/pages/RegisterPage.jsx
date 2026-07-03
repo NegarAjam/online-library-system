@@ -1,56 +1,66 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { useNavigate, Link } from "react-router-dom";
 
-
-function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+function RegisterPage() {
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
     try {
-      const response = await api.post("login/", {
+      await api.post("register/", {
         username,
+        email,
         password,
       });
 
-      localStorage.setItem("access", response.data.access);
-      localStorage.setItem("refresh", response.data.refresh);
+      alert("Account created successfully");
 
-      alert("Login successful");
-
-      navigate("/dashboard");
-
+      navigate("/");
     } catch (error) {
 
         const data = error.response?.data;
 
-        console.log(data);
-
-        if (data?.detail) {
-            alert(data.detail);
+        if (data?.username) {
+            alert(data.username[0]);
         }
-        else if (error.response?.status === 401) {
-            alert("Invalid username or password");
+        else if (data?.email) {
+            alert(data.email[0]);
+        }
+        else if (data?.password) {
+            alert(data.password[0]);
         }
         else {
-            alert("Server error");
+            alert("Registration failed");
         }
-    }
+
+    } 
   };
 
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-4">
-          <h2 className="mb-4">Login</h2>
+
+          <h2 className="mb-4">
+            Create Account
+          </h2>
 
           <input
             className="form-control mb-3"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+          />
+
+          <input
+            className="form-control mb-3"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
@@ -62,17 +72,11 @@ function LoginPage() {
           />
 
           <button
-            className="btn btn-primary w-100"
-            onClick={handleLogin}
+            className="btn btn-success w-100"
+            onClick={handleRegister}
           >
-            Login
-          </button>
-
-        <div className="text-center mt-3">
-        <Link to="/register">
             Create Account
-        </Link>
-        </div>
+          </button>
 
         </div>
       </div>
@@ -80,4 +84,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
