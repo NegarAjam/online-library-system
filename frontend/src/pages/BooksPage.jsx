@@ -4,15 +4,20 @@ import Navbar from "../components/Navbar";
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [search]);
 
   const fetchBooks = async () => {
     try {
-      const response = await api.get("books/");
+      const response = await api.get(
+        `books/?search=${search}`
+      );
+
       setBooks(response.data);
+
     } catch (error) {
       console.log(error);
     }
@@ -79,7 +84,20 @@ function BooksPage() {
       <Navbar />
 
       <div className="container mt-5">
+
         <h2>Books</h2>
+
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by title or author..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+          />
+        </div>
 
         <table className="table table-bordered">
           <thead>
@@ -106,14 +124,18 @@ function BooksPage() {
                   {book.available_copies > 0 ? (
                     <button
                       className="btn btn-success btn-sm"
-                      onClick={() => borrowBook(book.id)}
+                      onClick={() =>
+                        borrowBook(book.id)
+                      }
                     >
                       Borrow
                     </button>
                   ) : (
                     <button
                       className="btn btn-warning btn-sm"
-                      onClick={() => reserveBook(book.id)}
+                      onClick={() =>
+                        reserveBook(book.id)
+                      }
                     >
                       Reserve
                     </button>
