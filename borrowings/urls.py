@@ -1,4 +1,7 @@
 from django.urls import path
+from .admin_views import AdminDashboardView
+
+
 
 from .views import (
     BorrowBookView,
@@ -26,12 +29,17 @@ urlpatterns = [
     ),
 
     path(
-    "my-borrowings/",
-    MyBorrowingsView.as_view()
+        "my-borrowings/",
+        MyBorrowingsView.as_view()
     ),
 
     path(
         "my-reservations/",
         MyReservationsView.as_view()
     ),
+    
+    path("admin-dashboard/",
+        AdminDashboardView.as_view()
+    ),
+
 ]

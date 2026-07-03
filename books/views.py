@@ -7,9 +7,8 @@ from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsAdminRole
 
-class BookViewSet(viewsets.ModelViewSet):
 
-    queryset = Book.objects.all()
+class BookViewSet(viewsets.ModelViewSet):
 
     serializer_class = BookSerializer
 
@@ -18,16 +17,37 @@ class BookViewSet(viewsets.ModelViewSet):
         SearchFilter,
     ]
 
-    filterset_fields = [
-        "author",
-        "genre",
-        "publication_year",
-    ]
-
     search_fields = [
         "title",
         "author",
     ]
+
+    queryset = Book.objects.all()
+
+    def get_queryset(self):
+
+        queryset = Book.objects.all()
+
+        author = self.request.query_params.get("author")
+        genre = self.request.query_params.get("genre")
+        year = self.request.query_params.get("publication_year")
+
+        if author:
+            queryset = queryset.filter(
+                author__icontains=author
+            )
+
+        if genre:
+            queryset = queryset.filter(
+                genre__icontains=genre
+            )
+
+        if year:
+            queryset = queryset.filter(
+                publication_year=year
+            )
+
+        return queryset
 
     def get_permissions(self):
 
@@ -40,4 +60,3 @@ class BookViewSet(viewsets.ModelViewSet):
             return [IsAdminRole()]
 
         return []
-    
