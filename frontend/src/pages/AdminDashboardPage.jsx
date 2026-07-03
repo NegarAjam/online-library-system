@@ -45,7 +45,7 @@ function AdminDashboardPage() {
 
         <h2 className="mb-4">Admin Dashboard 📊</h2>
 
-        {/* 📊 STATS */}
+        {/* STATS */}
         <div className="row">
 
           <div className="col-md-4">
@@ -71,11 +71,13 @@ function AdminDashboardPage() {
 
         </div>
 
-        {/* 📚 Popular Books */}
+        {/* Popular Books */}
         <div className="mt-5">
+
           <h4>🔥 Most Popular Books</h4>
 
           <table className="table table-bordered mt-3">
+
             <thead>
               <tr>
                 <th>Book</th>
@@ -84,21 +86,27 @@ function AdminDashboardPage() {
             </thead>
 
             <tbody>
+
               {data.popular_books.map((book, index) => (
                 <tr key={index}>
                   <td>{book.book__title}</td>
                   <td>{book.borrow_count}</td>
                 </tr>
               ))}
+
             </tbody>
+
           </table>
+
         </div>
 
-        {/* 👤 Users with fines */}
+        {/* Users with fines */}
         <div className="mt-5">
-          <h4>⚠️ Users with Fines</h4>
+
+          <h4>⚠️ Users With Fines</h4>
 
           <table className="table table-bordered mt-3">
+
             <thead>
               <tr>
                 <th>User</th>
@@ -107,14 +115,49 @@ function AdminDashboardPage() {
             </thead>
 
             <tbody>
+
               {data.users_with_fines.map((user, index) => (
                 <tr key={index}>
                   <td>{user.user__username}</td>
                   <td>${user.total_fine}</td>
                 </tr>
               ))}
+
             </tbody>
+
           </table>
+
+        </div>
+
+        {/* Member Performance */}
+        <div className="mt-5">
+
+          <h4>🏆 Member Performance</h4>
+
+          <table className="table table-bordered mt-3">
+
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Total Borrowed</th>
+                <th>Total Fines</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {data.member_performance.map((member, index) => (
+                <tr key={index}>
+                  <td>{member.user__username}</td>
+                  <td>{member.total_borrowed}</td>
+                  <td>${member.total_fines || 0}</td>
+                </tr>
+              ))}
+
+            </tbody>
+
+          </table>
+
         </div>
 
       </div>
