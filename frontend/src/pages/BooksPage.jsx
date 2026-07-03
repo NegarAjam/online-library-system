@@ -4,17 +4,34 @@ import Navbar from "../components/Navbar";
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
+
   const [search, setSearch] = useState("");
+  const [author, setAuthor] = useState("");
+  const [genre, setGenre] = useState("");
+  const [year, setYear] = useState("");
 
   useEffect(() => {
     fetchBooks();
-  }, [search]);
+  }, [search, author, genre, year]);
 
   const fetchBooks = async () => {
     try {
-      const response = await api.get(
-        `books/?search=${search}`
-      );
+
+      let url = `books/?search=${search}`;
+
+      if (author) {
+        url += `&author=${author}`;
+      }
+
+      if (genre) {
+        url += `&genre=${genre}`;
+      }
+
+      if (year) {
+        url += `&publication_year=${year}`;
+      }
+
+      const response = await api.get(url);
 
       setBooks(response.data);
 
@@ -87,19 +104,64 @@ function BooksPage() {
 
         <h2>Books</h2>
 
-        <div className="mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search by title or author..."
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-          />
+        <div className="row mb-3">
+
+          <div className="col-md-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+            />
+          </div>
+
+          <div className="col-md-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Author"
+              value={author}
+              onChange={(e) =>
+                setAuthor(e.target.value)
+              }
+            />
+          </div>
+
+          <div className="col-md-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Genre"
+              value={genre}
+              onChange={(e) =>
+                setGenre(e.target.value)
+              }
+            />
+          </div>
+
+          <div className="col-md-3">
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Year"
+              value={year}
+              onChange={(e) =>
+                setYear(e.target.value)
+              }
+            />
+          </div>
+
         </div>
 
-        <table className="table table-bordered">
+        <p className="text-muted">
+          {books.length} book(s) found
+        </p>
+
+        <table className="table table-bordered table-hover">
+
           <thead>
             <tr>
               <th>Title</th>
@@ -112,13 +174,26 @@ function BooksPage() {
           </thead>
 
           <tbody>
+
             {books.map((book) => (
               <tr key={book.id}>
+
                 <td>{book.title}</td>
                 <td>{book.author}</td>
                 <td>{book.genre}</td>
                 <td>{book.publication_year}</td>
-                <td>{book.available_copies}</td>
+
+                <td>
+                  {book.available_copies > 0 ? (
+                    <span className="badge bg-success">
+                      {book.available_copies}
+                    </span>
+                  ) : (
+                    <span className="badge bg-danger">
+                      Out of Stock
+                    </span>
+                  )}
+                </td>
 
                 <td>
                   {book.available_copies > 0 ? (
@@ -128,7 +203,7 @@ function BooksPage() {
                         borrowBook(book.id)
                       }
                     >
-                      Borrow
+                      📚 Borrow
                     </button>
                   ) : (
                     <button
@@ -137,15 +212,18 @@ function BooksPage() {
                         reserveBook(book.id)
                       }
                     >
-                      Reserve
+                      🔖 Reserve
                     </button>
                   )}
                 </td>
+
               </tr>
             ))}
+
           </tbody>
 
         </table>
+
       </div>
     </>
   );

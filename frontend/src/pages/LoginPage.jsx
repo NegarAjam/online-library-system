@@ -2,7 +2,6 @@ import { useState } from "react";
 import api from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 
-
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -15,28 +14,54 @@ function LoginPage() {
         password,
       });
 
+      console.log("LOGIN RESPONSE:", response.data);
+      console.log("ROLE =", response.data.user.role);
+      // =========================
+      // ذخیره توکن‌ها
+      // =========================
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
 
+      // =========================
+      // چک کردن اینکه user و role وجود دارد یا نه
+      // =========================
+      const user = response.data.user;
+
+      if (user && user.role) {
+        localStorage.setItem("role", user.role);
+      }
+
       alert("Login successful");
 
-      navigate("/dashboard");
+      // =========================
+      // هدایت بر اساس role
+      // =========================
+        const role = user?.role?.toLowerCase();
+
+        if (role === "admin") {
+            navigate("/admin-dashboard");
+        } else {
+            navigate("/dashboard");
+        }
 
     } catch (error) {
 
-        const data = error.response?.data;
+      const data = error.response?.data;
 
-        console.log(data);
+      console.log("LOGIN ERROR:", data);
 
-        if (data?.detail) {
-            alert(data.detail);
-        }
-        else if (error.response?.status === 401) {
-            alert("Invalid username or password");
-        }
-        else {
-            alert("Server error");
-        }
+      if (data?.detail) {
+        alert(data.detail);
+      }
+      else if (error.response?.status === 401) {
+        alert("Invalid username or password");
+      }
+      else if (data) {
+        alert(JSON.stringify(data));
+      }
+      else {
+        alert("Server error");
+      }
     }
   };
 
@@ -44,6 +69,7 @@ function LoginPage() {
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-4">
+
           <h2 className="mb-4">Login</h2>
 
           <input
@@ -68,11 +94,11 @@ function LoginPage() {
             Login
           </button>
 
-        <div className="text-center mt-3">
-        <Link to="/register">
-            Create Account
-        </Link>
-        </div>
+          <div className="text-center mt-3">
+            <Link to="/register">
+              Create Account
+            </Link>
+          </div>
 
         </div>
       </div>

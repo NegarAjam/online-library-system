@@ -37,14 +37,18 @@ function MyReservationsPage() {
 
         <h2>My Reservations</h2>
 
-        <table className="table table-bordered">
+        <p className="text-muted">
+          {reservations.length} reservation(s)
+        </p>
+
+        <table className="table table-bordered table-hover">
 
           <thead>
             <tr>
               <th>ID</th>
               <th>Book ID</th>
               <th>Reservation Date</th>
-              <th>Active</th>
+              <th>Status</th>
             </tr>
           </thead>
 
@@ -52,14 +56,25 @@ function MyReservationsPage() {
 
             {reservations.map((item) => (
               <tr key={item.id}>
+
                 <td>{item.id}</td>
-                <td>{item.book}</td>
+
+                <td>{item.book_title}</td>
+
                 <td>{item.reservation_date}</td>
+
                 <td>
-                  {item.is_active
-                    ? "Yes"
-                    : "No"}
+                  {item.is_active ? (
+                    <span className="badge bg-warning text-dark">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="badge bg-secondary">
+                      Closed
+                    </span>
+                  )}
                 </td>
+
               </tr>
             ))}
 

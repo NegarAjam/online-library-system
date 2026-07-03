@@ -7,6 +7,9 @@ import MyReservationsPage from "./pages/MyReservationsPage";
 import DashboardPage from "./pages/DashboardPage";
 import PrivateRoute from "./components/PrivateRoute";
 import RegisterPage from "./pages/RegisterPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminRoute from "./components/AdminRoute";
+import AdminBooksPage from "./pages/AdminBooksPage";
 
 function App() {
   return (
@@ -22,13 +25,31 @@ function App() {
           path="/register"
           element={<RegisterPage />}
         />
-        
+
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
               <DashboardPage />
             </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin-dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboardPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin-books"
+          element={
+            <AdminRoute>
+              <AdminBooksPage />
+            </AdminRoute>
           }
         />
 
