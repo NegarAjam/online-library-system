@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import BooksPage from "./pages/BooksPage";
 import MyBorrowingsPage from "./pages/MyBorrowingsPage";
+import MyReservationsPage from "./pages/MyReservationsPage";
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
         <Route
           path="/my-borrowings"
           element={<MyBorrowingsPage />}
+        />
+        <Route
+          path="/my-reservations"
+          element={<MyReservationsPage />}
         />
       </Routes>
     </BrowserRouter>

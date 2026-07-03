@@ -26,6 +26,13 @@ function Navbar() {
           >
             My Borrowings
           </Link>
+
+          <Link
+            className="btn btn-outline-light ms-2"
+            to="/my-reservations"
+            >
+            My Reservations
+          </Link>
         </div>
 
       </div>
