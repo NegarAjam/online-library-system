@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import BooksPage from "./pages/BooksPage";
 import MyBorrowingsPage from "./pages/MyBorrowingsPage";
 import MyReservationsPage from "./pages/MyReservationsPage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
@@ -19,6 +20,11 @@ function App() {
           path="/my-reservations"
           element={<MyReservationsPage />}
         />
+        <Route
+        path="/dashboard"
+        element={<DashboardPage />}
+        />
+        
       </Routes>
     </BrowserRouter>
   );

@@ -19,7 +19,7 @@ function LoginPage() {
 
       alert("Login successful");
 
-      navigate("/books");
+      navigate("/dashboard");
 
     } catch (error) {
         console.log("ERROR:", error);
