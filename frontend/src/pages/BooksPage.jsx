@@ -35,56 +35,97 @@ function BooksPage() {
       alert(response.data.message);
 
       fetchBooks();
-    } catch (error) {
-        console.log("ERROR:", error);
-        console.log("RESPONSE:", error.response);
 
-        alert(JSON.stringify(error.response?.data));
-      
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.error ||
+        "Borrow failed"
+      );
+    }
+  };
+
+  const reserveBook = async (bookId) => {
+    try {
+      const token = localStorage.getItem("access");
+
+      const response = await api.post(
+        `reserve/${bookId}/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert(response.data.message);
+
+      fetchBooks();
+
+    } catch (error) {
+      console.log(error);
+
+      alert(
+        error.response?.data?.error ||
+        "Reservation failed"
+      );
     }
   };
 
   return (
-      <>
-        <Navbar />
+    <>
+      <Navbar />
 
-        <div className="container mt-5">
+      <div className="container mt-5">
         <h2>Books</h2>
 
         <table className="table table-bordered">
-            <thead>
+          <thead>
             <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Genre</th>
-                <th>Year</th>
-                <th>Action</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Genre</th>
+              <th>Year</th>
+              <th>Available</th>
+              <th>Action</th>
             </tr>
-            </thead>
+          </thead>
 
-            <tbody>
+          <tbody>
             {books.map((book) => (
-                <tr key={book.id}>
+              <tr key={book.id}>
                 <td>{book.title}</td>
                 <td>{book.author}</td>
                 <td>{book.genre}</td>
                 <td>{book.publication_year}</td>
+                <td>{book.available_copies}</td>
 
                 <td>
+                  {book.available_copies > 0 ? (
                     <button
-                    className="btn btn-success btn-sm"
-                    onClick={() => borrowBook(book.id)}
+                      className="btn btn-success btn-sm"
+                      onClick={() => borrowBook(book.id)}
                     >
-                    Borrow
+                      Borrow
                     </button>
+                  ) : (
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={() => reserveBook(book.id)}
+                    >
+                      Reserve
+                    </button>
+                  )}
                 </td>
-                </tr>
+              </tr>
             ))}
-            </tbody>
-        </table>
-        </div>
-    </>
+          </tbody>
 
+        </table>
+      </div>
+    </>
   );
 }
 
