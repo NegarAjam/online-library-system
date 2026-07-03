@@ -10,6 +10,10 @@ function BooksPage() {
   const [genre, setGenre] = useState("");
   const [year, setYear] = useState("");
 
+  const [showBorrowModal, setShowBorrowModal] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const [borrowDays, setBorrowDays] = useState(14);
+
   useEffect(() => {
     fetchBooks();
   }, [search, author, genre, year]);
@@ -40,31 +44,41 @@ function BooksPage() {
     }
   };
 
-  const borrowBook = async (bookId) => {
+
+  const borrowBook = async () => {
     try {
-      const token = localStorage.getItem("access");
 
-      const response = await api.post(
-        `borrow/${bookId}/`,
-        {},
+        const token = localStorage.getItem("access");
+
+        const response = await api.post(
+        `borrow/${selectedBookId}/`,
         {
-          headers: {
+            days: borrowDays,
+        },
+        {
+            headers: {
             Authorization: `Bearer ${token}`,
-          },
+            },
         }
-      );
+        );
 
-      alert(response.data.message);
+        alert(
+        `${response.data.message}
+    Due Date: ${response.data.due_date}`
+        );
 
-      fetchBooks();
+        setShowBorrowModal(false);
+
+        fetchBooks();
 
     } catch (error) {
-      console.log(error);
 
-      alert(
+        console.log(error);
+
+        alert(
         error.response?.data?.error ||
         "Borrow failed"
-      );
+        );
     }
   };
 
@@ -198,12 +212,14 @@ function BooksPage() {
                 <td>
                   {book.available_copies > 0 ? (
                     <button
-                      className="btn btn-success btn-sm"
-                      onClick={() =>
-                        borrowBook(book.id)
-                      }
+                    className="btn btn-success btn-sm"
+                    onClick={() => {
+                        setSelectedBookId(book.id);
+                        setBorrowDays(14);
+                        setShowBorrowModal(true);
+                    }}
                     >
-                      📚 Borrow
+                    📚 Borrow
                     </button>
                   ) : (
                     <button
@@ -223,7 +239,81 @@ function BooksPage() {
           </tbody>
 
         </table>
+            {showBorrowModal && (
 
+        <div
+            className="modal d-block"
+            style={{
+            backgroundColor: "rgba(0,0,0,0.5)"
+            }}
+        >
+
+            <div className="modal-dialog">
+
+            <div className="modal-content">
+
+                <div className="modal-header">
+
+                <h5 className="modal-title">
+                    Borrow Book
+                </h5>
+
+                <button
+                    className="btn-close"
+                    onClick={() =>
+                    setShowBorrowModal(false)
+                    }
+                />
+
+                </div>
+
+                <div className="modal-body">
+
+                <label className="form-label">
+                    Borrow Duration
+                </label>
+
+                <select
+                    className="form-select"
+                    value={borrowDays}
+                    onChange={(e) =>
+                    setBorrowDays(Number(e.target.value))
+                    }
+                >
+                    <option value={7}>7 Days</option>
+                    <option value={14}>14 Days</option>
+                    <option value={21}>21 Days</option>
+                </select>
+
+                </div>
+
+                <div className="modal-footer">
+
+                <button
+                    className="btn btn-secondary"
+                    onClick={() =>
+                    setShowBorrowModal(false)
+                    }
+                >
+                    Cancel
+                </button>
+
+                <button
+                    className="btn btn-success"
+                    onClick={borrowBook}
+                >
+                    Confirm Borrow
+                </button>
+
+                </div>
+
+            </div>
+
+            </div>
+
+        </div>
+
+        )}
       </div>
     </>
   );

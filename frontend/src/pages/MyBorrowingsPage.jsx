@@ -65,9 +65,10 @@ function MyBorrowingsPage() {
           <thead className="table-dark">
             <tr>
               <th>ID</th>
+              <th>Book</th>
               <th>Borrow Date</th>
               <th>Due Date</th>
-              <th>Fine</th>
+              <th>Fine (Live)</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -76,7 +77,7 @@ function MyBorrowingsPage() {
           <tbody>
             {borrowings.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center text-muted">
+                <td colSpan="7" className="text-center text-muted">
                   No borrowings found
                 </td>
               </tr>
@@ -85,18 +86,34 @@ function MyBorrowingsPage() {
                 <tr key={item.id}>
                   <td>{item.id}</td>
 
+                  {/* 📚 Book info */}
+                  <td>
+                    <strong>{item.book_title}</strong>
+                    <br />
+                    <small className="text-muted">
+                      Book ID: {item.book}
+                    </small>
+                  </td>
+
                   <td>{item.borrow_date}</td>
 
                   <td>{item.due_date}</td>
 
+                  {/* 🔥 LIVE FINE */}
                   <td>
-                    {item.fine_amount > 0 ? (
-                      <span className="badge bg-danger">
-                        ${Number(item.fine_amount).toLocaleString()}
-                      </span>
+                    {item.status === "borrowed" ? (
+                      item.live_fine > 0 ? (
+                        <span className="badge bg-danger">
+                          ${item.live_fine}
+                        </span>
+                      ) : (
+                        <span className="badge bg-success">
+                          $0
+                        </span>
+                      )
                     ) : (
-                      <span className="badge bg-success">
-                        $0
+                      <span className="badge bg-secondary">
+                        Final: ${item.fine_amount}
                       </span>
                     )}
                   </td>
