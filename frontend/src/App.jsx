@@ -6,25 +6,54 @@ import MyBorrowingsPage from "./pages/MyBorrowingsPage";
 import MyReservationsPage from "./pages/MyReservationsPage";
 import DashboardPage from "./pages/DashboardPage";
 
+import PrivateRoute from "./components/PrivateRoute";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/books" element={<BooksPage />} />
+
+        <Route
+          path="/"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/books"
+          element={
+            <PrivateRoute>
+              <BooksPage />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/my-borrowings"
-          element={<MyBorrowingsPage />}
+          element={
+            <PrivateRoute>
+              <MyBorrowingsPage />
+            </PrivateRoute>
+          }
         />
+
         <Route
           path="/my-reservations"
-          element={<MyReservationsPage />}
+          element={
+            <PrivateRoute>
+              <MyReservationsPage />
+            </PrivateRoute>
+          }
         />
-        <Route
-        path="/dashboard"
-        element={<DashboardPage />}
-        />
-        
+
       </Routes>
     </BrowserRouter>
   );
