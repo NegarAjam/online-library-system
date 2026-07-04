@@ -10,6 +10,7 @@ import RegisterPage from "./pages/RegisterPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminRoute from "./components/AdminRoute";
 import AdminBooksPage from "./pages/AdminBooksPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -35,6 +36,15 @@ function App() {
           }
         />
 
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        
         <Route
           path="/admin-dashboard"
           element={

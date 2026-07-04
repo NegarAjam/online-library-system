@@ -72,6 +72,13 @@ function Navbar() {
             </>
           )}
 
+            <Link
+            className="btn btn-outline-info me-2"
+            to="/profile"
+            >
+            Profile
+            </Link>
+
           <button
             className="btn btn-danger"
             onClick={handleLogout}
