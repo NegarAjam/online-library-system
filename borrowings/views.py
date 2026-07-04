@@ -2,6 +2,7 @@ from datetime import timedelta, date
 
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -14,16 +15,15 @@ from .models import Borrowing, Reservation
 from .serializers import BorrowingSerializer, ReservationSerializer
 
 
-# ----------------------------
-# Borrow Book
-# ----------------------------
+# =========================================================
+# BORROW BOOK
+# =========================================================
 class BorrowBookView(APIView):
 
     def post(self, request, book_id):
-
         book = get_object_or_404(Book, id=book_id)
 
-        # جلوگیری از Borrow تکراری
+        # Prevent duplicate borrowing
         existing_borrow = Borrowing.objects.filter(
             user=request.user,
             book=book,
@@ -42,10 +42,10 @@ class BorrowBookView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # مدت امانت
+        # Borrow duration (7, 14, 21 days only)
         try:
             days = int(request.data.get("days", 14))
-        except ValueError:
+        except (ValueError, TypeError):
             return Response(
                 {"error": "Invalid borrow period"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -63,32 +63,27 @@ class BorrowBookView(APIView):
             user=request.user,
             book=book,
             due_date=due_date,
+            borrow_days=days,
             status="borrowed",
         )
 
         book.available_copies -= 1
         book.save()
 
-        return Response(
-            {
-                "message": "Book borrowed successfully",
-                "borrow_days": days,
-                "due_date": due_date
-            }
-        )
+        return Response({
+            "message": "Book borrowed successfully",
+            "borrow_days": days,
+            "due_date": due_date
+        })
 
 
-# ----------------------------
-# Return Book
-# ----------------------------
+# =========================================================
+# RETURN BOOK
+# =========================================================
 class ReturnBookView(APIView):
 
     def post(self, request, borrowing_id):
-
-        borrowing = get_object_or_404(
-            Borrowing,
-            id=borrowing_id
-        )
+        borrowing = get_object_or_404(Borrowing, id=borrowing_id)
 
         if borrowing.status == "returned":
             return Response(
@@ -99,12 +94,11 @@ class ReturnBookView(APIView):
         borrowing.status = "returned"
         borrowing.return_date = date.today()
 
-        # calculate_fine (clean & reusable)
+        # Calculate fine using model method
         borrowing.fine_amount = borrowing.calculate_fine()
-
         borrowing.save()
 
-        # return book to inventory
+        # Restore inventory
         book = borrowing.book
         book.available_copies += 1
         book.save()
@@ -114,15 +108,16 @@ class ReturnBookView(APIView):
             "fine": borrowing.fine_amount
         })
 
-# ----------------------------
-# Reserve Book
-# ----------------------------
+
+# =========================================================
+# RESERVE BOOK (WITH AUTO BORROW SUPPORT)
+# =========================================================
 class ReserveBookView(APIView):
 
     def post(self, request, book_id):
-
         book = get_object_or_404(Book, id=book_id)
 
+        # Prevent duplicate reservation
         existing_reservation = Reservation.objects.filter(
             user=request.user,
             book=book,
@@ -135,28 +130,40 @@ class ReserveBookView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # If book is available → no need to reserve
         if book.available_copies > 0:
             return Response(
-                {"error": "Book available. No need to reserve."},
+                {"error": "Book is available. No need to reserve."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        Reservation.objects.create(
-            user=request.user,
-            book=book,
-            is_active=True
-        )
+        # Borrow days from reservation request (default 14)
+        try:
+            borrow_days = int(request.data.get("days", 14))
+        except (ValueError, TypeError):
+            borrow_days = 14
 
-        return Response(
-            {
-                "message": "Reservation created successfully"
-            }
-        )
+        if borrow_days not in [7, 14, 21]:
+            borrow_days = 14
+
+        with transaction.atomic():
+
+            Reservation.objects.create(
+                user=request.user,
+                book=book,
+                is_active=True,
+                borrow_days=borrow_days
+            )
+
+        return Response({
+            "message": "Reservation created successfully",
+            "borrow_days": borrow_days
+        })
 
 
-# ----------------------------
-# My Borrowings
-# ----------------------------
+# =========================================================
+# MY BORROWINGS
+# =========================================================
 class MyBorrowingsView(ListAPIView):
 
     serializer_class = BorrowingSerializer
@@ -167,22 +174,22 @@ class MyBorrowingsView(ListAPIView):
             user=self.request.user
         ).order_by("-borrow_date")
 
-    # override response for real-time fine
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
-        # add live fine for each borrowing
+        # Add real-time fine calculation
         for i, obj in enumerate(queryset):
             data[i]["live_fine"] = obj.calculate_fine()
 
         return Response(data)
 
-# ----------------------------
-# My Reservations
-# ----------------------------
+
+# =========================================================
+# MY RESERVATIONS
+# =========================================================
 class MyReservationsView(ListAPIView):
 
     serializer_class = ReservationSerializer

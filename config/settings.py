@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     # Local Apps
     'accounts',
     'books',
-    'borrowings',
+    'borrowings.apps.BorrowingsConfig',
     'notifications',
 ]
 

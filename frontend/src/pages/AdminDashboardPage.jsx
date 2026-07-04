@@ -74,7 +74,7 @@ function AdminDashboardPage() {
         {/* Popular Books */}
         <div className="mt-5">
 
-          <h4>🔥 Most Popular Books</h4>
+          <h4>Most Popular Books</h4>
 
           <table className="table table-bordered mt-3">
 
@@ -103,7 +103,7 @@ function AdminDashboardPage() {
         {/* Users with fines */}
         <div className="mt-5">
 
-          <h4>⚠️ Users With Fines</h4>
+          <h4>Users With Fines</h4>
 
           <table className="table table-bordered mt-3">
 
@@ -132,7 +132,7 @@ function AdminDashboardPage() {
         {/* Member Performance */}
         <div className="mt-5">
 
-          <h4>🏆 Member Performance</h4>
+          <h4>Member Performance</h4>
 
           <table className="table table-bordered mt-3">
 

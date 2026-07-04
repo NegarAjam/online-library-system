@@ -14,6 +14,10 @@ function BooksPage() {
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [borrowDays, setBorrowDays] = useState(14);
 
+  const [showReserveModal, setShowReserveModal] = useState(false);
+  const [selectedReserveBookId, setSelectedReserveBookId] = useState(null);
+  const [reserveDays, setReserveDays] = useState(14);
+
   useEffect(() => {
     fetchBooks();
   }, [search, author, genre, year]);
@@ -82,33 +86,40 @@ function BooksPage() {
     }
   };
 
-  const reserveBook = async (bookId) => {
+    const reserveBook = async () => {
     try {
-      const token = localStorage.getItem("access");
+        const token = localStorage.getItem("access");
 
-      const response = await api.post(
-        `reserve/${bookId}/`,
-        {},
+        const response = await api.post(
+        `reserve/${selectedReserveBookId}/`,
         {
-          headers: {
+            days: reserveDays,
+        },
+        {
+            headers: {
             Authorization: `Bearer ${token}`,
-          },
+            },
         }
-      );
+        );
 
-      alert(response.data.message);
+        alert(
+        `${response.data.message}
+    Borrow Duration: ${response.data.borrow_days} days`
+        );
 
-      fetchBooks();
+        setShowReserveModal(false);
+
+        fetchBooks();
 
     } catch (error) {
-      console.log(error);
+        console.log(error);
 
-      alert(
+        alert(
         error.response?.data?.error ||
         "Reservation failed"
-      );
+        );
     }
-  };
+    };
 
   return (
     <>
@@ -223,12 +234,14 @@ function BooksPage() {
                     </button>
                   ) : (
                     <button
-                      className="btn btn-warning btn-sm"
-                      onClick={() =>
-                        reserveBook(book.id)
-                      }
+                    className="btn btn-warning btn-sm"
+                    onClick={() => {
+                        setSelectedReserveBookId(book.id);
+                        setReserveDays(14);
+                        setShowReserveModal(true);
+                    }}
                     >
-                      🔖 Reserve
+                    🔖 Reserve
                     </button>
                   )}
                 </td>
@@ -314,7 +327,81 @@ function BooksPage() {
         </div>
 
         )}
-      </div>
+
+            {showReserveModal && (
+
+            <div
+                className="modal d-block"
+                style={{
+                backgroundColor: "rgba(0,0,0,0.5)"
+                }}
+            >
+
+                <div className="modal-dialog">
+
+                <div className="modal-content">
+
+                    <div className="modal-header">
+
+                    <h5 className="modal-title">
+                        Reserve Book
+                    </h5>
+
+                    <button
+                        className="btn-close"
+                        onClick={() => setShowReserveModal(false)}
+                    />
+
+                    </div>
+
+                    <div className="modal-body">
+
+                    <label className="form-label">
+                        Borrow Duration After Availability
+                    </label>
+
+                    <select
+                        className="form-select"
+                        value={reserveDays}
+                        onChange={(e) =>
+                        setReserveDays(Number(e.target.value))
+                        }
+                    >
+                        <option value={7}>7 Days</option>
+                        <option value={14}>14 Days</option>
+                        <option value={21}>21 Days</option>
+                    </select>
+
+                    </div>
+
+                    <div className="modal-footer">
+
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => setShowReserveModal(false)}
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        className="btn btn-warning"
+                        onClick={reserveBook}
+                    >
+                        Confirm Reservation
+                    </button>
+
+                    </div>
+
+                </div>
+
+                </div>
+
+            </div>
+
+            )}
+
+
+    </div>
     </>
   );
 }
