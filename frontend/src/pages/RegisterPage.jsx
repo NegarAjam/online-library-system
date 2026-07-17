@@ -8,6 +8,7 @@ function RegisterPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("member");
 
   const handleRegister = async () => {
     try {
@@ -15,29 +16,27 @@ function RegisterPage() {
         username,
         email,
         password,
+        role,
       });
 
       alert("Account created successfully");
 
       navigate("/");
     } catch (error) {
+      const data = error.response?.data;
 
-        const data = error.response?.data;
-
-        if (data?.username) {
-            alert(data.username[0]);
-        }
-        else if (data?.email) {
-            alert(data.email[0]);
-        }
-        else if (data?.password) {
-            alert(data.password[0]);
-        }
-        else {
-            alert("Registration failed");
-        }
-
-    } 
+      if (data?.username) {
+        alert(data.username[0]);
+      } else if (data?.email) {
+        alert(data.email[0]);
+      } else if (data?.password) {
+        alert(data.password[0]);
+      } else if (data?.role) {
+        alert(data.role[0]);
+      } else {
+        alert("Registration failed");
+      }
+    }
   };
 
   return (
@@ -70,6 +69,15 @@ function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+          <select
+            className="form-select mb-3"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
 
           <button
             className="btn btn-success w-100"

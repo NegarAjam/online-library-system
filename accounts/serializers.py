@@ -9,6 +9,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         min_length=8
     )
 
+    role = serializers.ChoiceField(
+        choices=User.ROLE_CHOICES,
+        default="member"
+    )
+
     class Meta:
         model = User
 
@@ -17,6 +22,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
+            "role",
         )
 
     def create(self, validated_data):
@@ -24,9 +30,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         return User.objects.create_user(
             username=validated_data["username"],
             email=validated_data["email"],
-            password=validated_data["password"]
+            password=validated_data["password"],
+            role=validated_data.get("role", "member"),
         )
-    
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -39,9 +47,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "phone_number",
+            "role",
         )
 
         read_only_fields = (
             "id",
             "username",
+            "role",
         )
