@@ -95,6 +95,13 @@ function Navbar() {
               >
                 My Reservations
               </Link>
+
+              <Link
+                className="btn btn-outline-light me-2"
+                to="/my-payments"
+              >
+                My Payments
+              </Link>
             </>
           )}
 

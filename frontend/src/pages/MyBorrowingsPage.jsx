@@ -25,6 +25,31 @@ function MyBorrowingsPage() {
     }
   };
 
+  const payFine = async (borrowingId) => {
+    try {
+      const token = localStorage.getItem("access");
+
+      const response = await api.post(
+        `payments/pay/${borrowingId}/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert(
+        `${response.data.message}\nTransaction ID: ${response.data.transaction_id}`
+      );
+
+      fetchBorrowings();
+    } catch (error) {
+      console.log(error);
+      alert(error.response?.data?.error || "Payment failed");
+    }
+  };
+
   const returnBook = async (borrowingId) => {
     try {
       const token = localStorage.getItem("access");
@@ -112,8 +137,15 @@ function MyBorrowingsPage() {
                         </span>
                       )
                     ) : (
-                      <span className="badge bg-secondary">
+                      <span
+                        className={
+                          item.fine_amount > 0 && !item.is_fine_paid
+                            ? "badge bg-danger"
+                            : "badge bg-secondary"
+                        }
+                      >
                         Final: ${item.fine_amount}
+                        {item.fine_amount > 0 && item.is_fine_paid && " (Paid)"}
                       </span>
                     )}
                   </td>
@@ -139,6 +171,17 @@ function MyBorrowingsPage() {
                         ↩️ Return
                       </button>
                     )}
+
+                    {item.status === "returned" &&
+                      item.fine_amount > 0 &&
+                      !item.is_fine_paid && (
+                        <button
+                          className="btn btn-warning btn-sm"
+                          onClick={() => payFine(item.id)}
+                        >
+                          💳 Pay Fine
+                        </button>
+                      )}
                   </td>
                 </tr>
               ))

@@ -11,6 +11,7 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminRoute from "./components/AdminRoute";
 import AdminBooksPage from "./pages/AdminBooksPage";
 import ProfilePage from "./pages/ProfilePage";
+import MyPaymentsPage from "./pages/MyPaymentsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 
 function App() {
@@ -87,6 +88,15 @@ function App() {
           element={
             <PrivateRoute>
               <MyReservationsPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/my-payments"
+          element={
+            <PrivateRoute>
+              <MyPaymentsPage />
             </PrivateRoute>
           }
         />
