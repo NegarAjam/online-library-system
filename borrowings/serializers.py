@@ -20,6 +20,7 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "due_date",
             "return_date",
             "fine_amount",
+            "is_fine_paid",
             "status",
             "live_fine",   # 🔥 added
         ]

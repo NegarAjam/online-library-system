@@ -4,6 +4,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 from books.models import Book
+from notifications.services import notify_user
 from .models import Reservation, Borrowing
 
 
@@ -46,6 +47,16 @@ def handle_book_availability(sender, instance, **kwargs):
 
         reservation.is_active = False
         reservation.save(update_fields=["is_active"])
+
+        notify_user(
+            reservation.user,
+            (
+                f"Your reservation for '{book.title}' is now available "
+                f"and has been borrowed for you until {due_date}."
+            ),
+            notif_type="reservation",
+            subject="Reserved Book Available",
+        )
 
         book.available_copies -= 1
 

@@ -53,6 +53,18 @@ class Borrowing(models.Model):
         default=0
     )
 
+    is_fine_paid = models.BooleanField(
+        default=False
+    )
+
+    # ----------------------------
+    # Notifications
+    # ----------------------------
+    last_reminder_sent = models.DateField(
+        null=True,
+        blank=True
+    )
+
     # ----------------------------
     # Status
     # ----------------------------
