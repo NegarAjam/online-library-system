@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'books',
     'borrowings.apps.BorrowingsConfig',
     'notifications',
+    'payments',
 ]
 
 MIDDLEWARE = [
