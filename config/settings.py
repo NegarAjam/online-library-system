@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'borrowings.apps.BorrowingsConfig',
     'notifications',
     'payments',
+    'reviews',
 ]
 
 MIDDLEWARE = [
