@@ -3,6 +3,8 @@ from django.urls import path
 from .views import (
     SendReminderView,
     ReservationNotificationView,
+    NotificationListView,
+    MarkNotificationReadView,
 )
 
 urlpatterns = [
@@ -15,5 +17,15 @@ urlpatterns = [
     path(
         "reservation-notification/<int:reservation_id>/",
         ReservationNotificationView.as_view()
+    ),
+
+    path(
+        "notifications/",
+        NotificationListView.as_view()
+    ),
+
+    path(
+        "notifications/<int:notification_id>/read/",
+        MarkNotificationReadView.as_view()
     ),
 ]
