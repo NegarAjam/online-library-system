@@ -11,6 +11,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from books.models import Book
+from notifications.services import notify_user
 from .models import Borrowing, Reservation
 from .serializers import BorrowingSerializer, ReservationSerializer
 
@@ -19,6 +20,8 @@ from .serializers import BorrowingSerializer, ReservationSerializer
 # BORROW BOOK
 # =========================================================
 class BorrowBookView(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, book_id):
         book = get_object_or_404(Book, id=book_id)
@@ -82,6 +85,8 @@ class BorrowBookView(APIView):
 # =========================================================
 class ReturnBookView(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, borrowing_id):
         borrowing = get_object_or_404(Borrowing, id=borrowing_id)
 
@@ -91,17 +96,30 @@ class ReturnBookView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Calculate fine using model method before flipping status,
+        # since calculate_fine() short-circuits once status is "returned"
+        borrowing.fine_amount = borrowing.calculate_fine()
+
         borrowing.status = "returned"
         borrowing.return_date = date.today()
-
-        # Calculate fine using model method
-        borrowing.fine_amount = borrowing.calculate_fine()
         borrowing.save()
 
         # Restore inventory
         book = borrowing.book
         book.available_copies += 1
         book.save()
+
+        if borrowing.fine_amount > 0:
+            notify_user(
+                borrowing.user,
+                (
+                    f"You have a fine of {borrowing.fine_amount} for "
+                    f"returning '{book.title}' late. "
+                    f"Please pay it online."
+                ),
+                notif_type="fine",
+                subject="Overdue Fine Notice",
+            )
 
         return Response({
             "message": "Book returned successfully",
@@ -113,6 +131,8 @@ class ReturnBookView(APIView):
 # RESERVE BOOK (WITH AUTO BORROW SUPPORT)
 # =========================================================
 class ReserveBookView(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, book_id):
         book = get_object_or_404(Book, id=book_id)
