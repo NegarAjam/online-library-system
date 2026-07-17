@@ -1,14 +1,40 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
 function Navbar() {
   const navigate = useNavigate();
 
   const role = localStorage.getItem("role");
 
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const dashboardLink =
     role === "admin"
       ? "/admin-dashboard"
       : "/dashboard";
+
+  useEffect(() => {
+    fetchUnreadCount();
+  }, []);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const token = localStorage.getItem("access");
+
+      const response = await api.get("notifications/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUnreadCount(
+        response.data.filter((item) => !item.is_read).length
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("access");
@@ -71,6 +97,18 @@ function Navbar() {
               </Link>
             </>
           )}
+
+            <Link
+            className="btn btn-outline-info me-2 position-relative"
+            to="/notifications"
+            >
+            Notifications
+            {unreadCount > 0 && (
+              <span className="badge bg-danger ms-1">
+                {unreadCount}
+              </span>
+            )}
+            </Link>
 
             <Link
             className="btn btn-outline-info me-2"

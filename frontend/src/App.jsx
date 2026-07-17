@@ -11,6 +11,7 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminRoute from "./components/AdminRoute";
 import AdminBooksPage from "./pages/AdminBooksPage";
 import ProfilePage from "./pages/ProfilePage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function App() {
   return (
@@ -86,6 +87,15 @@ function App() {
           element={
             <PrivateRoute>
               <MyReservationsPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/notifications"
+          element={
+            <PrivateRoute>
+              <NotificationsPage />
             </PrivateRoute>
           }
         />
