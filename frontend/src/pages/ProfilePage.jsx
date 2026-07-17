@@ -9,6 +9,7 @@ function ProfilePage() {
     email: "",
     first_name: "",
     last_name: "",
+    phone_number: "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -53,6 +54,7 @@ function ProfilePage() {
           email: profile.email,
           first_name: profile.first_name,
           last_name: profile.last_name,
+          phone_number: profile.phone_number,
         },
         {
           headers: {
@@ -183,6 +185,24 @@ function ProfilePage() {
                   setProfile({
                     ...profile,
                     last_name: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">
+                Phone Number
+              </label>
+
+              <input
+                className="form-control"
+                placeholder="For SMS reminders"
+                value={profile.phone_number}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    phone_number: e.target.value,
                   })
                 }
               />

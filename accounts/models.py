@@ -15,5 +15,10 @@ class User(AbstractUser):
         default='member'
     )
 
+    phone_number = models.CharField(
+        max_length=20,
+        blank=True
+    )
+
     def __str__(self):
         return self.username
